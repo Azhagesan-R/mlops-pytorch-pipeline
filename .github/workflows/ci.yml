@@ -25,10 +25,4 @@ jobs:
 
     - name: Run Unit Tests
       run: |
-        # Dynamically append the exact directory containing the 'src' folder to the python path
-        SRC_PATH=$(find . -type d -name "src" -o -type d -name "Src" | head -n 1)
-        ROOT_DIR=$(dirname "$SRC_PATH")
-        echo "Resolved Python package root to: $ROOT_DIR"
-        
-        # Force execute pytest with the correct path mapping override
-        pytest -o "pythonpath=$ROOT_DIR" $(find . -type d -name "tests")
+        pytest -o pythonpath=. tests/
