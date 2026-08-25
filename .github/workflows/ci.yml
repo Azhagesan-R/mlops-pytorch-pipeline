@@ -25,4 +25,10 @@ jobs:
 
     - name: Run Unit Tests
       run: |
+        echo "=== Checking files inside src ==="
+        ls -la src/
+        echo "=== Checking files inside tests ==="
+        ls -la tests/
+        echo "=================================="
         pytest -o pythonpath=. tests/
+
