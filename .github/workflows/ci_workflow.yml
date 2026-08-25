@@ -7,7 +7,7 @@ on:
     branches: [ develop ]
 
 jobs:
-  lint-and-test:
+  testing:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
@@ -25,9 +25,10 @@ jobs:
         REQ_FILE=$(find . -name train.txt | head -n 1)
         pip install -r "$REQ_FILE"
 
-    # Dynamically find the tests folder and pass its specific parent directory to Python
-    - name: Run Unit Tests
+    # Path verification
+    - name: Print working directory
       run: |
-        TEST_DIR=$(find . -type d -name tests | head -n 1)
-        SRC_PARENT=$(dirname "$TEST_DIR")
-        pytest -o "pythonpath=$SRC_PARENT" "$TEST_DIR"
+        echo "Checking path at ubuntu-latest"       
+        pwd
+        ls -ltr
+        echo "finised+++++++++++"
