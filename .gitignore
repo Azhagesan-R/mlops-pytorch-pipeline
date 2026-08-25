@@ -1,0 +1,22 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environments & Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# PyTorch/ML artifacts
+*.pth
+*.pt
+*.onnx
+models/
+data/
+
+# OS metadata
+.DS_Store
+Thumbs.db
