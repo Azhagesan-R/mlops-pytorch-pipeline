@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pytorch-serving-deployment
+  namespace: mlops-pipeline
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inference-server
+  template:
+    metadata:
+      labels:
+        app: inference-server
+    spec:
+      containers:
+      - name: serve
+        image: Azhagesan-R/mlops-serve:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MODEL_PATH
+          value: /mnt/models/model.pth
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: "500m"
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz/live
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /healthz/ready
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        volumeMounts:
+        - name: model-volume
+          mountPath: /mnt/models
+      volumes:
+      - name: model-volume
+        persistentVolumeClaim:
+          claimName: model-pvc
