@@ -1,7 +1,7 @@
 model:
   num_classes: 10
 training:
-  epochs: 5
-  batch_size: 16
+  epochs: 15
+  batch_size: 32
   lr: 0.001
-  num_samples: 160
+  patience: 3
