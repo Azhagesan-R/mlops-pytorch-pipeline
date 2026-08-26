@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pytorch-training-job
+  namespace: mlops-pipeline
+spec:
+  template:
+    spec:
+      containers:
+      - name: train
+        image: Azhagesan-R/mlops-train:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: CONFIG_PATH
+          value: /configs/training_config.yaml
+        - name: MODEL_OUTPUT_DIR
+          value: /mnt/models
+        volumeMounts:
+        - name: config-volume
+          mountPath: /configs
+        - name: model-volume
+          mountPath: /mnt/models
+      restartPolicy: OnFailure
+      volumes:
+      - name: config-volume
+        configMap:
+          name: training-config
+      - name: model-volume
+        persistentVolumeClaim:
+          claimName: model-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-pvc
+  namespace: mlops-pipeline
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
