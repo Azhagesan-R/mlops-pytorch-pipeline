@@ -28,15 +28,3 @@ spec:
       - name: model-volume
         persistentVolumeClaim:
           claimName: model-pvc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: model-pvc
-  namespace: mlops-pipeline
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 1Gi
