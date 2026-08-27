@@ -1,19 +1,41 @@
-# Stage 1: Build & Package Requirements
-FROM python:3.10-slim AS builder
+# Stage 1: Assembly layer for serving dependencies
+FROM python:3.11-slim AS builder
 WORKDIR /app
+
 RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ && rm -rf /var/lib/apt/lists/*
 COPY requirements/serve.txt .
-RUN pip install --no-cache-dir --user -r serve.txt
 
-# Stage 2: Lean serving runtime footprint
-FROM python:3.10-slim AS runner
+# FIX: Explicitly add the CPU index URL here to prevent multi-gigabyte GPU downloads
+RUN pip install --no-cache-dir --prefix=/install --extra-index-url https://pytorch.org -r serve.txt
+
+# Stage 2: Hardened, production serving footprint
+FROM python:3.11-slim AS runner
 WORKDIR /app
-COPY --from=builder /root/.local /root/.local
-COPY src/ /app/src/
 
-ENV PATH=/root/.local/bin:$PATH
-ENV PYTHONPATH=/app
-ENV MODEL_PATH=/mnt/models/model.pth
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 8000
-ENTRYPOINT ["uvicorn", "src/serve.py:app", "--host", "0.0.0.0", "--port", "8000"]
+# Bring the files over from the decoupled custom build prefix
+COPY --from=builder /install /usr/local
+COPY src/ ./src/
+
+# Configuration Environment variables 
+ENV PYTHONPATH=/app/src
+ENV PYTHONUNBUFFERED=1
+ENV MODEL_PATH=/app/checkpoints/model.pth
+
+# Establish low-privilege non-root execution space 
+RUN groupadd -g 8888 mlopsgroup && \
+    useradd -u 8888 -g mlopsgroup -m -s /bin/bash mlopsuser && \
+    mkdir -p /app/checkpoints && \
+    # Grant mlopsuser ownership/permissions over the copied libraries & binaries
+    chown -R mlopsuser:mlopsgroup /app /usr/local
+
+USER mlopsuser
+
+EXPOSE 8080
+
+# Production Healthcheck definition
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+ENTRYPOINT ["uvicorn", "src.serve:app", "--host", "0.0.0.0", "--port", "8080"]

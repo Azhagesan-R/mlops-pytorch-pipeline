@@ -1,20 +1,32 @@
-# Stage 1: Build & Package Python Wheels
-FROM python:3.10-slim AS builder
+# Stage 1: Dependency Assembly (Build environment)
+FROM python:3.11-slim AS builder
 WORKDIR /app
+
+# Install compilation prerequisites safely
 RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ && rm -rf /var/lib/apt/lists/*
 COPY requirements/train.txt .
+
+# FIX: Point extra-index-url to the official PyTorch CPU wheel repository
+#RUN pip install --no-cache-dir --user -r train.txt --extra-index-url https://pytorch.org
 RUN pip install --no-cache-dir --user -r train.txt
 
-# Stage 2: Clean Executable Final Runtime
-FROM python:3.10-slim AS runner
+# Stage 2: Training Runtime Environment
+FROM python:3.11-slim AS training
 WORKDIR /app
-COPY --from=builder /root/.local /root/.local
-COPY src/ /app/src/
-COPY configs/ /app/configs/
 
+# Pull only compiled wheels from the builder layer 
+COPY --from=builder /root/.local /root/.local
+COPY src/ ./src/
+COPY configs/ ./configs/
+
+# Production Environment Variables & Mounting paths
 ENV PATH=/root/.local/bin:$PATH
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app/src
+ENV PYTHONUNBUFFERED=1
 ENV CONFIG_PATH=/app/configs/training_config.yaml
-ENV MODEL_OUTPUT_DIR=/mnt/models
+ENV MODEL_OUTPUT_DIR=/app/checkpoints
+
+# Explicit volumes as requested by assignment design
+VOLUME ["/app/data", "/app/checkpoints"]
 
 ENTRYPOINT ["python", "src/train.py"]
