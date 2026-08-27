@@ -11,3 +11,9 @@ training:
 output:
   checkpoint_dir: "./checkpoints"
   model_name: "model.pth"
+  num_classes: 10
+training:
+  epochs: 5
+  batch_size: 16
+  lr: 0.001
+  num_samples: 160
