@@ -1,4 +1,16 @@
 model:
+  architecture: "simple_cnn"
+  num_classes: 10
+data:
+  data_dir: "./data"
+training:
+  epochs: 5
+  batch_size: 32
+  learning_rate: 0.001
+  early_stopping_patience: 3
+output:
+  checkpoint_dir: "./checkpoints"
+  model_name: "model.pth"
   num_classes: 10
 training:
   epochs: 5
