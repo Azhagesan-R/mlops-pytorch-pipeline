@@ -70,6 +70,9 @@ mlops-pytorch-pipeline/
 └── tests/
     └── test_model.py
 
+    <img width="297" height="585" alt="image" src="https://github.com/user-attachments/assets/e92a43ef-91ae-4268-9b3b-1c64e5b01f89" />
+
+
 
 ### 📝 Phase Breakdowns & Architectural Specifications
 
