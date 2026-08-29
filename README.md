@@ -9,7 +9,7 @@
 
 ### 🎯 Project Overview
 
-This project establishes a production-grade machine learning lifecycle for an image classification workflow. The pipeline spans across four distinct engineering operational phases: 
+This project establishes a production-grade machine learning lifecycle for an image classification workflow. The pipeline spans across four distinct engineering operational phases: 
 
 1. **Source Control & Collaboration:** Enforcing standardized branching protocols, peer-reviewed integration requests, automated verification pipelines, and decoupled environment configurations.
 2. **Modular PyTorch Implementations:** Developing structured training loops that consume dynamic properties, emit predictable telemetry logs, and export reproducible model artifacts alongside decoupled, lightweight prediction APIs.
@@ -18,7 +18,7 @@ This project establishes a production-grade machine learning lifecycle for an im
 
 ### 🧠 Core Learning Objectives
 
-By completing this infrastructure pipeline, practitioners demonstrate proficiency in: 
+By completing this infrastructure pipeline, practitioners demonstrate proficiency in: 
 
 * **Repository Architecture & Git Ops:** Constructing standard workspace topologies, isolation profiles, semantic log messaging, and branch protections.
 * **Efficient Image Compilation:** Isolating compilation dependencies from runtime layers to reduce attack vectors and optimize image layers for deep learning.
@@ -28,7 +28,7 @@ By completing this infrastructure pipeline, practitioners demonstrate proficienc
 
 ### 🛠️ System Prerequisites
 
-Executing this multi-stage ecosystem requires access to the following toolchains and environments: 
+Executing this multi-stage ecosystem requires access to the following toolchains and environments: 
 
 * **Runtime Environment:** Python engine (version 3.10 or higher) paired with functional deep learning framework experience.
 * **Engine Isolation:** Local container engine installation or an accessible virtual machine running an active container virtualization daemon.
@@ -36,17 +36,55 @@ Executing this multi-stage ecosystem requires access to the following toolchains
 * **Cluster Environment:** A standardized local Kubernetes distribution or a fully provisioned cloud-managed orchestration engine.
 * **Version Control Hub:** A public user account hosted on a cloud-based source code distribution platform.
 
+### 🏗️ System Architecture Diagram
+
+```mermaid
+graph TD
+    %% GitHub Workflow
+    subgraph GitOps [1. Source Control & CI]
+        A[Developer Feature Branch] -->|Pull Request| B[GitHub Actions CI/CD]
+        B -->|Unit Tests & Lint| C{Tests Pass?}
+        C -->|Yes| D[Merge to Main Trunk]
+    end
+
+    %% Build Phase
+    subgraph Containerization [2. Multi-Stage Docker Builds]
+        D --> E1[Dockerfile.train]
+        D --> E2[Dockerfile.serve]
+        E1 -->|Build & Optimize| F1[Training Image]
+        E2 -->|Build & Optimize| F2[Inference Service Image]
+    end
+
+    %% Kubernetes Cluster Environment
+    subgraph K8s [3. Kubernetes Cluster Orchestration]
+        direction TB
+        Config[ConfigMap / Hyperparameters] -->|Inject| Job
+        
+        subgraph Ephemeral Workload
+            Job[Kubernetes Training Job] -->|Run Ephemeral Loop| F1
+            Job -->|Export Weights| PV[(Persistent Volume Claim)]
+        end
+
+        subgraph High-Availability Serving
+            F2 -->|Deploy| Deploy[Serving Deployment]
+            PV -->|Mount Read-Only| Deploy
+            HPA[Horizontal Pod Autoscaler] -->|Scale Pods| Deploy
+            SVC[Kubernetes Service] -->|Route Traffic| Deploy
+            Deploy -->|Health Checks| Probes[Liveness & Readiness Probes]
+        end
+    end
+
+    %% Style profiles
+    style GitOps fill:#f9f,stroke:#333,stroke-width:2px
+    style Containerization fill:#bbf,stroke:#333,stroke-width:2px
+    style K8s fill:#dfd,stroke:#333,stroke-width:2px
+```
+
 ### 📁 Repository Structure Blueprint
 
-The version-controlled project hub must adhere precisely to the hierarchical organization outlined below: 
-
-## 📁 Repository Structure Blueprint
 The version-controlled project hub must adhere precisely to the hierarchical organization outlined below:
 
-### Repository Structure Blueprint
-
-The version-controlled project hub must adhere precisely to the hierarchical organization outlined below:
-
+```text
 mlops-pytorch-pipeline/
 ├── README.md
 ├── .gitignore
@@ -75,7 +113,7 @@ mlops-pytorch-pipeline/
 │   └── serve.txt
 └── tests/
     └── test_model.py
-
+```
 
 ### 📝 Phase Breakdowns & Architectural Specifications
 
@@ -111,16 +149,7 @@ mlops-pytorch-pipeline/
 
 * **Horizontal Redundancy:** Enforce concurrent, multi-replica application scaling inside the network topology.
 * **Read-Only Storage:** Mount historical training storage volumes into prediction runtimes using read-only access flags.
-* **Resiliency Ingress Probes:** 
-
+* **Resiliency Ingress Probes:** 
   * An automated evaluation probe mapping endpoints regularly to cycle deadlocked instances.
   * A readiness pipeline checking availability thresholds before allowing traffic ingestion.
-* **Traffic Balancing:** Establish a native network routing interface mapping public-facing target ports directly to internal container execution endpoints.
-
-### Part F: Complete Pipeline Validation Matrix
-
-1. **Namespace & Property Deployment:** Instantiate cluster isolation layers and property matrices.
-2. **Workload Computation:** Trigger the automated batch processing execution to completion.
-3. **Service Rollout:** Launch the highly available prediction pods, auto-scalers, and service proxies.
-4. **Topology Inspection:** Inspect service health states and execute confirmation traffic requests using external client utilities.
-
+* **Traffic Balancing:** Establish a native network routing interface mapping public-facing target ports directly to internal container executions.
