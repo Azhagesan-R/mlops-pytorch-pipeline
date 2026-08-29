@@ -43,6 +43,10 @@ The version-controlled project hub must adhere precisely to the hierarchical org
 ## 📁 Repository Structure Blueprint
 The version-controlled project hub must adhere precisely to the hierarchical organization outlined below:
 
+### Repository Structure Blueprint
+
+The version-controlled project hub must adhere precisely to the hierarchical organization outlined below:
+
 mlops-pytorch-pipeline/
 ├── README.md
 ├── .gitignore
@@ -52,8 +56,8 @@ mlops-pytorch-pipeline/
 ├── src/
 │   ├── train.py
 │   ├── model.py
-│   ├── dataset.py
-│   └── serve.py
+│   └── dataset.py
+├── serve.py
 ├── configs/
 │   └── training_config.yaml
 ├── docker/
